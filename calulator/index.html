@@ -1,6 +1,71 @@
+
+
 <html>
 <head>
 <script>
+	var stackObj = {
+		content: [],
+  		push: function(val){
+  	  		stackObj.content[stackObj.content.length] = val;
+  		},
+  		pop: function(){
+			var top = stackObj.getTop();
+				if(top!=null){
+  					stackObj.content = stackObj.content.splice(0,stackObj.content.length -1);
+				}
+				return top;
+	 		},
+		getTop: function() {
+			if(stackObj.content.length == 0){
+  		 	 return null;
+	  		}
+		return stackObj.content[stackObj.content.length-1];
+		},
+		initialize: function(initStack) {
+			stackObj.content = initStack;
+		}
+	}
+	function actuallyCalcPostfix(tokens)  {
+		var result = [];
+		var a = 0;
+		var b = 0;
+		var c = 0;
+		//initialize stack
+		stackObj.initialize([]);
+		
+		for ( var i = 0; i <= tokens.length; i++ ) {
+			if ( i == tokens.length ) { //Checks if the result is ready to be displayed
+				result[0] = stackObj.pop();
+			}else if (!isOperator(tokens[i]) ) { //if the current token is a oeprand, push to stack
+				stackObj.push(tokens[i]);
+			} else {
+				if ( tokens[i]== "+" ) {
+					var a = parseFloat (stackObj.pop() );
+					var b = parseFloat (stackObj.pop() );
+					var c = a + b;
+					stackObj.push (a+b);
+				} else if (tokens[i]=="/") {
+					var a = parseFloat (stackObj.pop() );
+					var b = parseFloat (stackObj.pop() );
+					var c = a + b;
+					stackObj.push (b / a);
+				} else if (tokens[i]=="*") {
+					var a = parseFloat (stackObj.pop() );
+					var b = parseFloat (stackObj.pop() );
+					var c = a + b;
+					stackObj.push (a * b);
+				} else if (tokens[i]=="-") {
+					var a = parseFloat (stackObj.pop() );
+					var b = parseFloat (stackObj.pop() );
+					var c = a + b;
+					stackObj.push (b - a);
+				}	
+			}
+			
+			updateVisualizationPostfix(i,tokens,result);
+		}
+	}
+	
 	function calculatePostfix() {
   	  	var infix = document.getElementById("inputEq").value;
   	  	var tokens = [];
@@ -10,30 +75,10 @@
     		}
   	  	}
   	  	getPostfix(tokens);
+		actuallyCalcPostfix(getPostfix(tokens));
 	}
 
-	var stackObj = {
-  		content: [],
-  	  	push: function(val){
-      	  	stackObj.content[stackObj.content.length] = val;
-  	  	},
-  	  	pop: function(){
-    		var top = stackObj.getTop();
-    			if(top!=null){
-      				stackObj.content = stackObj.content.splice(0,stackObj.content.length -1);
-    			}
-    			return top;
- 		 	},
-  		getTop: function(){
-    		if(stackObj.content.length == 0){
-      		  return null;
-    	  	}
-    	return stackObj.content[stackObj.content.length-1];
-  		},
-  		initialize: function(initStack) {
-    		stackObj.content = initStack;
-  		}
-	}
+
 
 	function updateVisualization(step, tokens, postfix) {
   		var outS = "<hr><h1>Step " + (step + 1) + "</h1>";
@@ -51,6 +96,7 @@
   		  	outS += "</div>";
 
   		  	//update stack
+		
   		  	tokens = stackObj.content;
   		  	outS += "<div>";
   		  	outS += "<h2>Stack:</h2>";
@@ -74,7 +120,42 @@
   	  	outS += "</div>";
   	  	document.getElementById("visual").innerHTML += outS;
 	}
+	function updateVisualizationPostfix(step, tokens, result) {
+  		var outS = "<hr><h1>Step " + (step + 1) + "</h1>";
+  	  		//update postfix
+  	  		outS += "<div>";
+  		  	var infix = tokens;
+  		  	outS += "<h2>Postfix:</h2>";
+  		  	for (var i = 0; i < tokens.length; i++){
+    			if( i == step ) {
+      				outS += "<span class='smallBox'><b>" + tokens[i] + "</b></span>";
+    			} else {
+      			  	outS += "<span class='smallBox'>" + tokens[i] + "</span>";
+    			}
+  		  	}
+  		  	outS += "</div>";
 
+  		  	//update stack
+			
+  		  	tokens = stackObj.content;
+  		  	outS += "<div>";
+  		  	outS += "<h2>Stack:</h2>";
+  		  	for (var i = 0; i < tokens.length; i++) {
+    			outS += "<span class='smallBox'>" + tokens[i] + "</span>";
+  		  	}
+  		  	outS += "<span class='smallBox'><b>&lt;</b></span>";
+  		  	outS += "</div>";
+
+  		  	//update result
+  		  	tokens = result;
+  		  	outS += "<div>";
+  		  	outS += "<h2>Result:</h2>";
+  		  	for (var i = 0; i < tokens.length; i++){
+      		  	outS += "<span class='smallBox'>" + tokens[i] + "</span>";
+  	  		}
+  	  	outS += "</div>";
+  	  	document.getElementById("visual").innerHTML += outS;
+	}
 	var operators = ["*", "/", "+", "-"];
 	
 	function isOperator(t) {
@@ -121,6 +202,7 @@
       			postFix = postFix + currScan;
     		}
     		updateVisualization(i, tokens, postFix);
+			
   	  	}
 		var top = stackObj.getTop();
   	  	if(top != null){ 
