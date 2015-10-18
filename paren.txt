@@ -1,0 +1,74 @@
+/*
+Infix
+2 * ( 3 + 4 ) + 5 ^ 2
+2 * 7 + 25
+14 + 25
+39
+
+Postfix
+2 3 4 + * 5 2 ^ +
+2 7 * 25 +
+14 25 +
+39
+*/
+
+scan the string into tokens
+
+begin with the first token
+
+	If it is an operand, add it to the postfix string
+
+	if the token is an operator
+	
+		compare the presidence of the token operator
+	
+			if and only if the presidence of the operator at the top of the stack is less than the presidence of the token operator
+				add the operator to the stack
+			
+			else
+				
+				pop the stack and add the operator from the stack to the postfix string
+				
+
+	if the token is an open parenthesis
+		
+		push to the stack
+		
+	if the token is close parenthesis
+		
+		pop the stack and add the poped token to the postfix string continuously until it reaches an open parenthesis
+		
+	if there are no more tokens
+	
+		pop the stack and add the poped token to the postfix string until there are no more tokens in the stack
+		
+		if there are no more tokens and nothing is in the stack
+		
+			return the postfix string
+		
+	
+move to the next token
+
+
+Action		tokens					stack	postfix string		result
+------		------					-----	--------------		------
+Scan tokens	2 * ( 3 + 4 ) + 5 ^ 2	null	null				init
+scan "2"	* ( 3 + 4 ) + 5 ^ 2		null	2					"2" to postfix string
+scan "*"	( 3 + 4 ) + 5 ^ 2		*		2					push "*"
+scan "("	3 + 4 ) + 5 ^ 2			* (		2					push "("
+scan "3"	+ 4 ) + 5 ^ 2			* (		2 3					"3" to postfix string
+scan "+"	4 ) + 5 ^ 2				* ( +	2 3					push "+"
+scan "4"	) + 5 ^ 2				* ( +	2 3 4				"4" to postfix string
+scan ")" 	+ 5 ^ 2					*		2 3 4 +				"+" to postfix string
+scan "+"	5 ^ 2					null	2 3 4 + 			pop "*"
+-			5 ^ 2					null	2 3 4 + *			"*" to postfix string
+-			5 ^ 2					+		2 3 4 + *			push "+"
+scan "5"	^ 2						+		2 3 4 + * 5			"5" to postfix string
+scan "^"	2						+ ^		2 3 4 + * 5			push "^"
+scan "2"	null					+ ^		2 3 4 + * 5 2		"2" to postfix string
+pop			null					+		2 3 4 + * 5 2 ^		pop "^"
+pop			null					null	2 3 4 + * 5 2 ^ +	pop "+"
+end			null					null	null				return [2,3,4,+,*,5,2,^,+]		
+														
+
+

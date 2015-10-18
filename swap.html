@@ -1,0 +1,82 @@
+// Linklists
+//
+// [head >],Data >,Data >,Data >,Data NULL;
+//
+// Each node has a veriable called "next" that contains the address to the next node.
+// To delete a node, create a link that skips the node that is to be deleted, then delete the node.
+//
+
+
+
+
+<html>
+<head>
+<script>
+var linkedList = {
+	init:function(initLL, head) {
+		//initLL is [{id:"",next:"",data:{} }]
+		linkedList.nodes = initLL;
+		linkedList.head = head;
+		
+	},
+	head:null,
+	nodes:[],
+	addNode: function(nodeData, afterNodeID) {
+		var newID = new Date().getTime();
+		var newNode = {
+			id: newID,
+			data: NodeData,
+			next: null
+		}
+		if ( linkedList.isEmpty()) {
+			linkedList.head = newID;
+		} else {
+			var pos = linkedList.getNodePos(afterNodeID);
+			if ( pos < 0 ) {
+				alert(afterNodeID + "Not a valid node");
+				return;
+			}
+			var swap = linkedList.nodes[pos].next;
+			linkedList.nodes[pos].next = newID;
+			newNode.next = swap;
+			linkedList.nodes[linkedList.node.length]=newNode;
+		}
+	},
+	deleteNode: function(id) {
+		
+	},
+	getNodePos: function(id) {
+		var pos = -1;
+		for (var i = 0; i < linkedList.nodes.length; i++) {
+			if list[i].id == id ) {
+				pos = i;
+				break;
+			}
+		}
+		return pos;
+	}
+	isEmpty: function() {
+		if ( linkedList.head == null ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+/*
+var x = 5;
+var y = 10;
+var swap = x;
+x = y;
+y = swap;
+console.log(x);
+console.log(y);
+*/
+
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
