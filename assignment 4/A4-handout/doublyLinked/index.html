@@ -70,7 +70,8 @@ var linkedList = {
       var newNode = {
           id: newID,
           data: nodeData,
-          next: beforeNodeID
+          next: beforeNodeID,
+		  prev: "null"
       }
       if(linkedList.head == null){
         linkedList.head = newID;
@@ -135,6 +136,13 @@ var linkedList = {
 				swapArray[i].next=swapArray[i+1].id;
 			} else {
 				swapArray[i].next = null;
+			}
+		}
+		for (var i = 0; i < swapArray.length; i++){
+			if (i > 0) {
+				swapArray[i].prev=swapArray[i-1].id;
+			} else {
+				swapArray[i].prev = "head";
 			}
 		}
 		console.log(swapArray);

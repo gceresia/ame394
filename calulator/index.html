@@ -3,6 +3,19 @@
 <html>
 <head>
 <script>
+/* TESTED WITH:
+Infix
+2 * ( 3 + 4 ) + 5 ^ 2
+2 * 7 + 25
+14 + 25
+39
+
+Postfix
+2 3 4 + * 5 2 ^ +
+2 7 * 25 +
+14 25 +
+39
+*/
 	var stackObj = {
 		content: [],
   		push: function(val){
@@ -27,12 +40,8 @@
 	}
 	function actuallyCalcPostfix(tokens)  {
 		var result = [];
-		var a = 0;
-		var b = 0;
-		var c = 0;
 		//initialize stack
 		stackObj.initialize([]);
-		
 		for ( var i = 0; i <= tokens.length; i++ ) {
 			if ( i == tokens.length ) { //Checks if the result is ready to be displayed
 				result[0] = stackObj.pop();
@@ -42,24 +51,24 @@
 				if ( tokens[i]== "+" ) {
 					var a = parseFloat (stackObj.pop() );
 					var b = parseFloat (stackObj.pop() );
-					var c = a + b;
 					stackObj.push (a+b);
 				} else if (tokens[i]=="/") {
 					var a = parseFloat (stackObj.pop() );
 					var b = parseFloat (stackObj.pop() );
-					var c = a + b;
 					stackObj.push (b / a);
 				} else if (tokens[i]=="*") {
 					var a = parseFloat (stackObj.pop() );
 					var b = parseFloat (stackObj.pop() );
-					var c = a + b;
 					stackObj.push (a * b);
 				} else if (tokens[i]=="-") {
 					var a = parseFloat (stackObj.pop() );
 					var b = parseFloat (stackObj.pop() );
-					var c = a + b;
 					stackObj.push (b - a);
-				}	
+				} else if (tokens[i] == "^") { //Added for eponents! A3*****************
+					var a = parseFloat (stackObj.pop() );
+					var b = parseFloat (stackObj.pop() );
+					stackObj.push (Math.pow(b,a));
+				}
 			}
 			
 			updateVisualizationPostfix(i,tokens,result);
@@ -156,7 +165,7 @@
   	  	outS += "</div>";
   	  	document.getElementById("visual").innerHTML += outS;
 	}
-	var operators = ["*", "/", "+", "-"];
+	var operators = ["*", "/", "+", "-","(","^"];
 	
 	function isOperator(t) {
  		if(operators.indexOf(t) >= 0){
@@ -168,13 +177,21 @@
 	function isPrecGreater(a, b) {
   	  	var pn1 = 1;
   	  	var pn2 = 1;
+		if ( b == "^") { //Added for parens! A3*****************
+			pn2 = 3;
+		}
+		if (a == "^") {
+			pn1 = 3;
+		}
   	  	if(a == "*" || a == "/"){
     		pn1 = 2;
   	  	}
   	  	if(b == "*" || b == "/"){
    		 	pn2 = 2;
   	  	}
-  
+		if ( b == "(" || a == "(") {
+			return false;
+		}
   	  	if(pn1 >= pn2) {
     		return true;
   	  	}
@@ -186,24 +203,34 @@
   	  	stackObj.initialize([]);
   	  	document.getElementById("visual").innerHTML = "";
   	  	for (var i = 0; i < tokens.length; i++){
-    		var currScan = tokens[i];
+    			var currScan = tokens[i];
 			if(isOperator(currScan)) { // is operator
-      			var top = stackObj.getTop();
-      		  	if(top != null) {  // stack not empty
-        			while(top && isPrecGreater(top, currScan)){
-          			  postFix += stackObj.pop();
-          				top = stackObj.getTop();
-        			}
-        			stackObj.push(currScan);
-      		  	} else {  //stack is empty
-        			stackObj.push(currScan);
-      		  	}
-    		} else { // is NOT an operator
+				//console.log(currScan);
+      				var top = stackObj.getTop();
+      		  		if(top != null) {  // stack not empty
+        				while(top && isPrecGreater(top, currScan)){
+          			  		postFix += stackObj.pop();
+          					top = stackObj.getTop();
+        				}
+        				stackObj.push(currScan);
+      		  		} else {  //stack is empty
+        				stackObj.push(currScan);
+      		  		}
+			} else if (currScan ==")") { //Added for parens! A3*****************
+				console.log(stackObj.content.length);
+				for (var j = 0; j < stackObj.content.length; j++) {
+					if (stackObj.getTop() == "(") {
+						console.log("Found Preceding Paren! Breaking!");
+						stackObj.pop();
+						break;
+					}
+					postFix += stackObj.pop();
+				}
+  	  		} else { // is NOT an operator
       			postFix = postFix + currScan;
-    		}
-    		updateVisualization(i, tokens, postFix);
-			
-  	  	}
+    		} 
+				updateVisualization(i, tokens, postFix);
+  	  		} 
 		var top = stackObj.getTop();
   	  	if(top != null){ 
     		document.getElementById("visual").innerHTML += "<h1> Poping stack....</h1>";
